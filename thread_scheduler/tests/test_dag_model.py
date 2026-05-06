@@ -190,6 +190,72 @@ class TestDAGTask(unittest.TestCase):
         
         # 3 nodes = 3 pairs (C(3,2) = 3)
         self.assertEqual(len(candidates), 3)
+    
+    def test_get_nodes_by_object(self):
+        """Test get_nodes_by_object method."""
+        task = DAGTask(task_id="task1", period=100.0)
+        wceto_func = create_simple_wceto(10)
+        
+        # Add nodes with different objects
+        for obj, name in [("obj1", "n1"), ("obj1", "n2"), ("obj2", "n3")]:
+            node = DAGNode(object_id=obj, wceto_func=wceto_func, num_threads=1)
+            task.add_node(node, name)
+        
+        # Get nodes for obj1
+        obj1_nodes = task.get_nodes_by_object("obj1")
+        self.assertEqual(len(obj1_nodes), 2)
+        self.assertIn("n1", obj1_nodes)
+        self.assertIn("n2", obj1_nodes)
+        
+        # Get nodes for obj2
+        obj2_nodes = task.get_nodes_by_object("obj2")
+        self.assertEqual(len(obj2_nodes), 1)
+        self.assertIn("n3", obj2_nodes)
+        
+        # Get nodes for non-existent object
+        empty = task.get_nodes_by_object("nonexistent")
+        self.assertEqual(len(empty), 0)
+
+
+class TestEdgeCases(unittest.TestCase):
+    """Test edge cases and boundary conditions."""
+    
+    def test_single_node_dag(self):
+        """Test DAG with only one node."""
+        task = DAGTask(task_id="task1", period=100.0)
+        wceto_func = create_simple_wceto(10)
+        
+        node = DAGNode(object_id="obj1", wceto_func=wceto_func, num_threads=1)
+        task.add_node(node, "node1")
+        
+        self.assertEqual(task.num_nodes(), 1)
+        self.assertEqual(task.workload(), 10.0)
+        self.assertEqual(task.critical_path_length(), 10.0)
+        self.assertEqual(task.utilization(), 0.1)
+    
+    def test_empty_task(self):
+        """Test empty DAG task."""
+        task = DAGTask(task_id="task1", period=100.0)
+        
+        self.assertEqual(task.num_nodes(), 0)
+        self.assertEqual(task.workload(), 0.0)
+        self.assertEqual(task.critical_path_length(), 0.0)
+        self.assertEqual(task.utilization(), 0.0)
+        self.assertEqual(len(task.get_candidates()), 0)
+    
+    def test_all_same_object(self):
+        """Test when all nodes have same object (maximum candidates)."""
+        task = DAGTask(task_id="task1", period=100.0)
+        wceto_func = create_simple_wceto(10)
+        
+        # Add 4 nodes all with same object
+        for i in range(4):
+            node = DAGNode(object_id="obj1", wceto_func=wceto_func, num_threads=1)
+            task.add_node(node, f"node{i}")
+        
+        # 4 nodes = C(4,2) = 6 pairs
+        candidates = task.get_candidates()
+        self.assertEqual(len(candidates), 6)
 
 
 if __name__ == '__main__':
