@@ -143,6 +143,53 @@ This is the KEY algorithm that demonstrates the paper's contribution. Without th
 
 ---
 
+### Module 4: Core Allocation (Complete ✅)
+
+**Objective:** Calculate how many processor cores are needed for tasks under federated scheduling.
+
+**The Problem:**
+In a multi-core system, we need to figure out how many cores each task needs. The paper provides a formula (Equation 5) that calculates this based on:
+- Workload (total execution time)
+- Critical path (longest chain of dependencies)
+- Deadline (when the task must complete)
+
+**What I Built:**
+1. **calculate_core_allocation(dag)** - The KEY formula:
+   ```
+   m_i = ⌈(C_i - L_i) / (D_i - L_i)⌉
+   ```
+   
+   Where:
+   - C_i = total workload
+   - L_i = critical path length
+   - D_i = deadline
+   
+   This tells us how many cores are needed. If the result is -1, the task is infeasible!
+
+2. **is_high_utilization(dag)** - Checks if task needs more than 1 core (utilization > 1)
+
+3. **separate_high_low_utilization(tasks)** - In federated scheduling, high and low utilization tasks are handled differently:
+   - High (u > 1): Get dedicated cores
+   - Low (u ≤ 1): Share remaining cores
+
+4. **calculate_total_core_requirements(tasks)** - Calculates total cores needed for a whole task set
+
+5. **check_improved_core_allocation(original, new)** - Checks if collapse actually improved core allocation (Definition 6 from paper). This is used by the collapse algorithm to verify its working!
+
+6. **CoreAllocator class** - A class to help allocate cores in a multi-core system
+
+**Why This Matters:**
+This is how we MEASURE whether our collapse algorithm is working! If we collapse nodes and the core allocation goes down, we've succeeded. This is the main metric from the paper (~20% core reduction).
+
+**Testing:** 15 tests written and passed.
+- Verified core allocation formula
+- Verified high/low utilization detection
+- Verified improved core allocation check
+- Tested the CoreAllocator class
+- Tested edge cases and boundary conditions
+
+---
+
 ## What the Project Can Do Now
 
 The project can now:
@@ -154,15 +201,15 @@ The project can now:
 - **Model cache benefits** with growth factor WCETO
 - **Verify concavity** ensuring the collapse algorithm will work
 - **Run the core algorithm** that reduces core allocation
+- **Calculate core allocation** for multi-core scheduling!
 
-**We can now demonstrate the main contribution of the paper!**
+**We can now demonstrate the main contribution AND measure its effectiveness!**
 
 ---
 
 ## What's Next
 
 I still need to implement:
-- **Core allocation** - Calculate how many processor cores are needed
 - **Task generator** - Create test tasks with various parameters
 - **Metrics** - Measure improvements from collapse
 - **Experiments** - Run evaluations and compare results
@@ -183,6 +230,9 @@ python -m pytest tests/test_growth_factor.py -v
 
 # Run collapse tests
 python -m pytest tests/test_collapse.py -v
+
+# Run core allocation tests
+python -m pytest tests/test_core_allocation.py -v
 
 # Run all tests
 python -m pytest tests/ -v
