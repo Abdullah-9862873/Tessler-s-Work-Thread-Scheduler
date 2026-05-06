@@ -1,0 +1,14 @@
+# Thread Scheduler Simulator - Dependencies
+# Based on Prof. Tessler's paper: "Bringing Inter-Thread Cache Benefits to Federated Scheduling"
+
+# TODO: Add dependencies
+# Core dependencies (TBD)
+# networkx>=3.0
+# numpy>=1.24.0
+# matplotlib>=3.7.0
+
+# Optional: For interactive demos (TBD)
+# streamlit>=1.28.0
+
+# Testing (TBD)
+# pytest>=7.4.0
