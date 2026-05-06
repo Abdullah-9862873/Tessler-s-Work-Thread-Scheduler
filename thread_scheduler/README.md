@@ -237,6 +237,57 @@ Now we can generate many test tasks with different configurations to evaluate th
 
 ---
 
+### Module 6: Metrics Calculator (Complete ✅)
+
+**Objective:** Implement metrics calculation for evaluation from Equations 16-19. This measures the effectiveness of the collapse algorithm.
+
+**The Problem:**
+When we apply the collapse algorithm, we need to MEASURE how much we improved. The paper (Equations 16-19) defines specific metrics to quantify the benefits.
+
+**What I Built:**
+1. **calculate_core_savings(original_cores, collapsed_cores)** - Equation 16:
+   - Δm = m_saved = m_i,high - m̂_i,high
+   - Positive = cores saved!
+
+2. **calculate_workload_reduction(original_workload, collapsed_workload)** - Equation 18:
+   - ΔC = C_i - Ĉ_i
+   - Positive = workload reduced!
+
+3. **calculate_path_extension(original_critical_path, collapsed_critical_path)** - Equation 19:
+   - ΔL = L̂_i - L_i
+   - Shows how critical path changed (may increase due to merging)
+
+4. **calculate_schedulability_ratio(num_schedulable, total_tasks)** - Fraction of tasks that can be scheduled
+
+5. **calculate_utilization_change(original_utilization, collapsed_utilization)** - Change in utilization
+
+6. **evaluate_task_before_after(task_before, task_after)** - Single task metrics before/after
+
+7. **evaluate_task_set(tasks_before, tasks_after, heuristic)** - Aggregate metrics for entire task set
+
+8. **compare_heuristics(task_sets_before, task_sets_after)** - Compare results across OT-G, OT-L, OT-A
+
+9. **MetricsCalculator class** - Track and compute summary:
+   - `add_result()` - Add evaluation result
+   - `compute_summary()` - Get aggregate statistics
+   - `reset()` - Clear history
+   - `get_history()` - Retrieve stored results
+
+**Why This Matters:**
+This is how we PROVE the algorithm works! We can now:
+- Measure core savings (the main metric from the paper)
+- Compare different heuristics (OT-G, OT-L, OT-A)
+- Track results over many experiments
+- Generate summary statistics
+
+**Testing:** 36 tests written and passed.
+- Verified all metric calculations
+- Tested edge cases
+- Tested MetricsCalculator class
+- Tested heuristic comparison
+
+---
+
 ## What the Project Can Do Now
 
 The project can now:
@@ -249,7 +300,8 @@ The project can now:
 - **Verify concavity** ensuring the collapse algorithm will work
 - **Run the collapse algorithm** that reduces core allocation
 - **Calculate core allocation** for multi-core scheduling
-- **Generate synthetic tasks** for evaluation!
+- **Generate synthetic tasks** for evaluation
+- **Calculate metrics** to measure improvements!
 
 **We can now demonstrate the main contribution AND measure its effectiveness!**
 
@@ -258,7 +310,6 @@ The project can now:
 ## What's Next
 
 I still need to implement:
-- **Metrics** - Measure improvements from collapse
 - **Experiments** - Run evaluations and compare results
 - **Demo** - Build an interactive visualization
 
@@ -283,6 +334,9 @@ python -m pytest tests/test_core_allocation.py -v
 
 # Run task generator tests
 python -m pytest tests/test_task_generator.py -v
+
+# Run metrics tests
+python -m pytest tests/test_metrics.py -v
 
 # Run all tests
 python -m pytest tests/ -v
