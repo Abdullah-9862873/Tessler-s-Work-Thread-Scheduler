@@ -190,6 +190,53 @@ This is how we MEASURE whether our collapse algorithm is working! If we collapse
 
 ---
 
+### Module 5: Task Generator (Complete ✅)
+
+**Objective:** Generate synthetic DAG-OT tasks for evaluation matching the paper's parameters.
+
+**The Problem:**
+To test the collapse algorithm, we need many different task configurations. The paper (Section IX) describes a pipeline with specific parameters to generate realistic test tasks.
+
+**What I Built:**
+1. **generate_dag_structure(num_nodes, edge_probability)** - Creates a random DAG with:
+   - Specified number of nodes
+   - Edges added with given probability
+   - All edges go forward (i→j where i<j) to ensure acyclic
+
+2. **ensure_single_source_sink(G)** - Ensures the DAG has exactly one entry and exit:
+   - Adds a "source" node if multiple starting points
+   - Adds a "sink" node if multiple ending points
+
+3. **generate_dag_ot_task(...)** - Complete task generation pipeline:
+   - Generate DAG structure
+   - Enforce single source/sink
+   - Assign objects to nodes (some sharing for candidates)
+   - Create WCETO functions with growth factor
+   - Calculate period to achieve target utilization
+
+4. **generate_task_set(...)** - Generate multiple tasks:
+   - Divides total target_utilization across tasks
+   - Returns list of DAGTask objects
+
+5. **TaskSetGenerator class** - Class with paper parameters (Table IX):
+   - NODE_COUNTS = [16, 32, 64]
+   - EDGE_PROBABILITIES = [0.02, 0.06, 0.12]
+   - NUM_OBJECTS = [4, 8, 16]
+   - GROWTH_FACTORS = [0.2, 0.6, 1.0]
+   - TARGET_UTILIZATIONS = [0.25, 0.50, 2.0, 4.0, 8.0, 16.0]
+
+**Why This Matters:**
+Now we can generate many test tasks with different configurations to evaluate the collapse algorithm. The TaskSetGenerator can create both random tasks and all parameter combinations (grid search).
+
+**Testing:** 29 tests written and passed.
+- Verified DAG structure generation
+- Verified source/sink enforcement
+- Verified task generation with different parameters
+- Verified paper constants match
+- Tested reproducibility with seeds
+
+---
+
 ## What the Project Can Do Now
 
 The project can now:
@@ -200,8 +247,9 @@ The project can now:
 - **Identify candidate nodes** that can be merged
 - **Model cache benefits** with growth factor WCETO
 - **Verify concavity** ensuring the collapse algorithm will work
-- **Run the core algorithm** that reduces core allocation
-- **Calculate core allocation** for multi-core scheduling!
+- **Run the collapse algorithm** that reduces core allocation
+- **Calculate core allocation** for multi-core scheduling
+- **Generate synthetic tasks** for evaluation!
 
 **We can now demonstrate the main contribution AND measure its effectiveness!**
 
@@ -210,7 +258,6 @@ The project can now:
 ## What's Next
 
 I still need to implement:
-- **Task generator** - Create test tasks with various parameters
 - **Metrics** - Measure improvements from collapse
 - **Experiments** - Run evaluations and compare results
 - **Demo** - Build an interactive visualization
@@ -233,6 +280,9 @@ python -m pytest tests/test_collapse.py -v
 
 # Run core allocation tests
 python -m pytest tests/test_core_allocation.py -v
+
+# Run task generator tests
+python -m pytest tests/test_task_generator.py -v
 
 # Run all tests
 python -m pytest tests/ -v
