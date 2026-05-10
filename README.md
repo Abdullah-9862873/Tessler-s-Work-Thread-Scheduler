@@ -202,7 +202,3 @@ If you're joining this project:
 The 133 tests serve as both verification and documentation. Each test has a descriptive name that explains what it's checking.
 
 ---
-
-## Contact
-
-For questions about this project, refer to Prof. Corey Tessler's research on thread scheduling optimization.
