@@ -340,6 +340,54 @@ python -m pytest tests/test_metrics.py -v
 
 # Run all tests
 python -m pytest tests/ -v
+
+---
+
+## 🎬 Web App Visualization (G1 Complete ✅)
+
+A Streamlit web app that demonstrates the DAGOT-REDUCE algorithm by showing:
+- **Traditional cores needed** (without optimization)
+- **Optimized cores needed** (with our algorithm)
+- **Core savings!**
+
+### How to Run
+
+```bash
+cd "D:\Professors Reached\10- Corey Tessler\Project\web_app_visualization"
+streamlit run frontend/app.py
+```
+
+Then open: **http://localhost:8501**
+
+### What the App Shows
+
+**Page 1: Upload Video**
+1. Upload a video file (MP4, AVI, MOV, MKV)
+2. Choose output resolutions (480p, 720p, 1080p, 4K)
+3. Choose output formats (H.264, H.265, VP9, AV1)
+4. Click "Optimize Pipeline"
+5. See:
+   - ❌ Traditional: X cores needed
+   - ✅ Optimized: Y cores needed
+   - 🎉 Savings: Z cores (%)
+
+**Page 2: How It Works**
+- Explains the problem and solution
+- Shows the formula used
+- What to show the professor
+
+### What to Show Professor
+
+> "Look - without this algorithm, your video transcode needs **X cores**.
+> With the DAGOT-REDUCE algorithm, it only needs **Y cores**.
+> That's a **Z% reduction** in processor requirements!"
+
+### Project Structure
+
+```
+web_app_visualization/
+└── frontend/
+    └── app.py              ← Complete app (G1)
 ```
 
 ---
